@@ -1,0 +1,18 @@
+# config.template.yaml — DB Manager
+# Copiado automaticamente para config.yaml na primeira execução.
+# TODO Substituir "localhost" pelos IPs privados das instâncias EC2 em produção.
+
+gerente_bd:
+  host: "0.0.0.0"
+  porta: 50050
+  qtd_max_replicas: 2
+
+  # Host onde os ReplicaAgents estão rodando (todos na mesma instância em produção)
+  replicas_host: "localhost"
+
+  # Porta base — as portas de cada ReplicaAgent são derivadas automaticamente
+  # (ver README — Topologia de réplicas). Não é necessário listar portas manualmente.
+  replicas_porta_base: 50100
+
+dados:
+  diretorio: "./data"

@@ -1,0 +1,73 @@
+syntax = "proto3";
+package dbmanager;
+
+option java_package = "com.scd.dbmanager.proto";
+option java_outer_classname = "DBManagerProto";
+option java_multiple_files = true;
+
+service DBManager {
+  rpc Read           (ReadRequest)   returns (ReadResult);
+  rpc Write          (WriteRequest)  returns (WriteAck);
+  rpc HealthCheck    (HealthRequest) returns (HealthResponse);
+  rpc GetStatus      (StatusRequest) returns (StatusResponse);
+  rpc PromoteReplica (PromoteRequest) returns (PromoteAck);
+}
+
+// Leitura — category guia o ShardRouter; vazia = executa nos 3 principais e mescla
+message ReadRequest {
+  string category        = 1;
+  string sql             = 2;
+  repeated string params = 3;
+}
+
+message ReadResult {
+  bool             success = 1;
+  string           error   = 2;
+  repeated string  rows    = 3;  // cada row é um JSON serializado
+}
+
+// Escrita — idempotente via origin_id; category guia o ShardRouter
+message WriteRequest {
+  string category        = 1;
+  string sql             = 2;
+  repeated string params = 3;
+  string origin_id       = 4;
+  string product_id      = 5;
+}
+
+message WriteAck {
+  bool   success = 1;
+  string error   = 2;
+}
+
+message HealthRequest {}
+
+message HealthResponse {
+  bool  healthy         = 1;
+  int32 replicas_online = 2;
+  int32 replicas_total  = 3;
+}
+
+message StatusRequest {}
+
+message ShardStatus {
+  string          shard_id        = 1;
+  string          primary_id      = 2;
+  repeated string replica_ids     = 3;
+  bool            failover_active = 4;
+}
+
+message StatusResponse {
+  repeated ShardStatus shards = 1;
+}
+
+message PromoteRequest {
+  string shard_id   = 1;
+  string replica_id = 2;
+}
+
+message PromoteAck {
+  bool   success     = 1;
+  string new_primary = 2;
+  string error       = 3;
+}

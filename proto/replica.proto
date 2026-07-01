@@ -1,0 +1,29 @@
+syntax = "proto3";
+package replica;
+
+option java_package = "com.scd.replica.proto";
+option java_outer_classname = "ReplicaProto";
+option java_multiple_files = true;
+
+service ReplicaAgent {
+  rpc ApplyWrite (WriteRequest)  returns (WriteAck);
+  rpc Ping       (PingRequest)   returns (PingResponse);
+}
+
+message WriteRequest {
+  string          sql       = 1;
+  repeated string params    = 2;
+  string          origin_id = 3;
+}
+
+message WriteAck {
+  bool   success = 1;
+  string error   = 2;
+}
+
+message PingRequest {}
+
+message PingResponse {
+  bool   ok      = 1;
+  string db_path = 2;  // caminho do arquivo .db local, para diagnóstico
+}

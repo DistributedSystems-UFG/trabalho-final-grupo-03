@@ -1,0 +1,15 @@
+# config.template.yaml — ReplicaAgent
+# Copiado automaticamente para config.yaml na primeira execução,
+# caso o config.yaml da raiz do projeto ainda não exista.
+#
+# A porta desta instância é DERIVADA automaticamente a partir de
+# --shard <shard_id> --index <N> (linha de comando) combinados com
+# gerente_bd.qtd_max_replicas e gerente_bd.replicas_porta_base abaixo.
+# Não é necessário (nem recomendado) escrever portas manualmente.
+
+gerente_bd:
+  qtd_max_replicas: 2
+  replicas_porta_base: 50100
+
+dados:
+  diretorio: "./data"

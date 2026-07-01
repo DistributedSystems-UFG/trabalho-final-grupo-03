@@ -1,0 +1,49 @@
+# ── configuração local (gerada no primeiro boot) ──────────────────────────────
+config.yaml
+
+# ── dados e bancos SQLite ──────────────────────────────────────────────────────
+data/
+*.db
+*.db-shm
+*.db-wal
+
+# ── Python ────────────────────────────────────────────────────────────────────
+**/__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+
+# stubs gRPC gerados (não versionar — gerados via grpc_tools.protoc)
+*_pb2.py
+*_pb2_grpc.py
+
+# ── Java / Maven ──────────────────────────────────────────────────────────────
+target/
+*.class
+*.jar
+*.war
+.mvn/
+hs_err_pid*.log
+
+# ── logs ──────────────────────────────────────────────────────────────────────
+logs/
+*.log
+
+# ── IDEs ──────────────────────────────────────────────────────────────────────
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# ── ambiente e segredos ───────────────────────────────────────────────────────
+.env
+*.pem
+*.key

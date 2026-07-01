@@ -1,0 +1,69 @@
+erDiagram
+    users {
+        TEXT id PK
+        TEXT username
+        TEXT password_hash
+        TEXT role
+        TEXT token
+    }
+
+    products {
+        TEXT    id PK
+        TEXT    seller_id FK
+        TEXT    name
+        TEXT    description
+        TEXT    category
+        REAL    price
+        INTEGER quantity
+        INTEGER alerta_quantidade
+        INTEGER alerta_enviado
+        TEXT    created_at
+        TEXT    expires_at
+    }
+
+    orders {
+        TEXT    id PK
+        TEXT    buyer_id FK
+        TEXT    seller_id FK
+        TEXT    product_id FK
+        INTEGER quantity
+        REAL    total_price
+        TEXT    status
+        TEXT    created_at
+    }
+
+    watchlist {
+        TEXT    id PK
+        TEXT    buyer_id FK
+        TEXT    product_id FK
+        REAL    max_price
+        INTEGER notified
+        TEXT    created_at
+    }
+
+    flash_offers {
+        TEXT    id PK
+        TEXT    product_id FK
+        REAL    original_price
+        REAL    promo_price
+        TEXT    status
+        TEXT    created_at
+        TEXT    expires_at
+    }
+
+    notifications {
+        TEXT    id PK
+        TEXT    user_id FK
+        TEXT    message
+        INTEGER read
+        TEXT    created_at
+    }
+
+    users ||--o{ products      : "vende"
+    users ||--o{ orders        : "compra"
+    users ||--o{ orders        : "vende"
+    users ||--o{ watchlist     : "monitora"
+    users ||--o{ notifications : "recebe"
+    products ||--o{ orders     : "referenciado em"
+    products ||--o{ watchlist  : "monitorado por"
+    products ||--o{ flash_offers : "promovido em"

@@ -1,0 +1,52 @@
+# config.template.yaml
+# Copiado automaticamente para config.yaml na primeira execução de qualquer componente.
+# Substitua os "localhost" pelos IPs privados das instâncias EC2 em produção.
+# NÃO versione o config.yaml — ele está no .gitignore.
+
+servidor:
+  host: "0.0.0.0"
+  porta: 8080   # porta 80 exige privilégio root — em produção, usar setcap ou systemd com CAP_NET_BIND_SERVICE
+
+# Endereços dos serviços internos — usados pelo Gateway para roteamento
+servicos:
+  inventario:
+    host: "localhost"
+    porta: 8002
+  transacoes:
+    host: "localhost"
+    porta: 8003
+  notificacao:
+    host: "localhost"
+    porta: 8004
+
+gerente_bd:
+  host: "localhost"
+  porta: 50050
+
+  # Número de réplicas por shard. As portas de cada ReplicaAgent são
+  # DERIVADAS automaticamente (ver README — Topologia de réplicas)
+  # a partir de replicas_host + replicas_porta_base. Não é necessário
+  # listar portas manualmente.
+  qtd_max_replicas: 2
+
+  # Host onde os ReplicaAgents estão rodando (todos na mesma instância EC2-6
+  # em produção). Em dev, "localhost".
+  replicas_host: "localhost"
+
+  # Porta base a partir da qual as portas de cada ReplicaAgent são derivadas.
+  replicas_porta_base: 50100
+
+fila_mensagens:
+  host: "localhost"
+  porta: 5672
+  usuario: "guest"
+  senha: "guest"
+
+agente_manutencao:
+  intervalo_segundos: 30
+
+dados:
+  diretorio: "./data"
+
+auth:
+  token_admin: "admin-secret-token"  # ALTERAR antes de deploy em produção

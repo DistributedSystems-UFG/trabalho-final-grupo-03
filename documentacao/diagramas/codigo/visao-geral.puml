@@ -1,0 +1,48 @@
+@startuml visão geral
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title Sistema de Controle de Inventário
+
+Person(comprador, "Comprador", "Compra produtos via CLI")
+Person(vendedor, "Vendedor", "Lista e gerencia produtos via CLI")
+Person(admin, "Admin", "Administra o sistema via CLI")
+
+Container_Boundary(sistema, "Sistema de Inventário") {
+    Container(gateway, "API Gateway", "Python · FastAPI", "Ponto de entrada REST. Autenticação, roteamento e health check.")
+
+    Container(inventario, "Serviço de inventário", "Python · FastAPI", "CRUD de produtos, watchlist e flash-offers. Publica flash.offer.")
+    Container(transacoes, "Serviço de transações", "Python · FastAPI", "Compra direta. Publica order.completed.")
+    Container(notificacao, "Serviço de notificação", "Python · FastAPI + pika", "Consome eventos RabbitMQ, persiste e serve notificações via polling.")
+    Container(agente, "Agente de manutenção", "Python · processo dedicado", "Monitora estoque, watchlist e flash-offers expiradas. Publica stock.low e price.alert.")
+
+    Container(gerente_bd, "Gerente de BD", "Java · gRPC", "Único ponto de acesso aos dados. ShardRouter, locks, replicação e failover.")
+
+    ContainerDb(shard_a, "Shard A", "SQLite", "Eletrônicos, Informática, Telefonia. Principal + N réplicas.")
+    ContainerDb(shard_b, "Shard B", "SQLite", "Roupas, Calçados, Acessórios. Principal + N réplicas.")
+    ContainerDb(shard_c, "Shard C", "SQLite", "Casa, Esporte, Outros. Principal + N réplicas.")
+
+    Container(fila, "Fila de mensagens", "RabbitMQ", "Pub-sub para eventos internos.")
+}
+
+Rel(comprador, gateway, "REST / HTTP")
+Rel(vendedor, gateway, "REST / HTTP")
+Rel(admin, gateway, "REST / HTTP · /admin")
+
+Rel(gateway, inventario, "roteia /products /watchlist /flash-offers")
+Rel(gateway, transacoes, "roteia /orders")
+Rel(gateway, notificacao, "roteia /notifications")
+
+Rel(inventario, gerente_bd, "ReadRequest / WriteRequest · gRPC")
+Rel(transacoes, gerente_bd, "ReadRequest / WriteRequest · gRPC")
+Rel(notificacao, gerente_bd, "ReadRequest / WriteRequest · gRPC")
+Rel(agente, gerente_bd, "ReadRequest / WriteRequest · gRPC")
+
+Rel(inventario, fila, "publica flash.offer")
+Rel(transacoes, fila, "publica order.completed")
+Rel(agente, fila, "publica stock.low · price.alert")
+Rel(notificacao, fila, "consome todos os eventos")
+
+Rel(gerente_bd, shard_a, "leitura / escrita · replica · failover")
+Rel(gerente_bd, shard_b, "leitura / escrita · replica · failover")
+Rel(gerente_bd, shard_c, "leitura / escrita · replica · failover")
+@enduml

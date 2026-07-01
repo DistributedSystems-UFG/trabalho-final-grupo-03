@@ -1,0 +1,43 @@
+graph TD
+    Internet(("🌐 Internet"))
+    Internet -->|"DNS round-robin · porta 80"| GW_A
+    Internet -->|"DNS round-robin · porta 80"| GW_B
+
+    GW_A["Gateway A :80\nEC2-1a"]
+    GW_B["Gateway B :80\nEC2-1b"]
+
+    GW_A & GW_B -->|"HTTP :8002"| Inv
+    GW_A & GW_B -->|"HTTP :8003"| Trans
+    GW_A & GW_B -->|"HTTP :8004"| Notif
+    GW_A & GW_B -.->|"gRPC :50050\nauth token"| GBD
+
+    subgraph EC2_2["EC2-2"]
+        Inv["Inventário :8002"]
+        Trans["Transações :8003"]
+    end
+
+    subgraph EC2_3["EC2-3"]
+        Notif["Notificação :8004"]
+        Agente["Agente de manutenção"]
+    end
+
+    Inv & Trans -->|"AMQP :5672"| RMQ
+    Agente -->|"AMQP :5672"| RMQ
+    RMQ -->|"AMQP :5672"| Notif
+
+    RMQ["RabbitMQ :5672\nEC2-4"]
+
+    Inv & Trans & Notif & Agente -->|"gRPC :50050"| GBD
+
+    GBD["Gerente de BD :50050\nEC2-5 · BDs principais"]
+
+    GBD -.->|"ApplyWrite · Ping\ngRPC interno"| RA_A1 & RA_A2 & RA_B1 & RA_B2 & RA_C1 & RA_C2
+
+    subgraph EC2_6["EC2-6 · réplicas (failover)"]
+        RA_A1["ReplicaAgent\nshard-A r1 :50051"]
+        RA_A2["ReplicaAgent\nshard-A r2 :50052"]
+        RA_B1["ReplicaAgent\nshard-B r1 :50053"]
+        RA_B2["ReplicaAgent\nshard-B r2 :50054"]
+        RA_C1["ReplicaAgent\nshard-C r1 :50055"]
+        RA_C2["ReplicaAgent\nshard-C r2 :50056"]
+    end
