@@ -2,7 +2,7 @@
 
 **Disciplina:** Software Concorrente e Distribuído — UFG/INF 2026.1  
 **Professor:** Fábio Moreira Costa  
-**Entrega:** 30/06/2026
+**Entrega:** 02/07/2026
 
 ## 1. Visão geral
 

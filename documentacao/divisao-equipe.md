@@ -2,7 +2,7 @@
 
 **Disciplina:** Software Concorrente e Distribuído — UFG/INF 2026.1
 **Professor:** Fábio Moreira Costa
-**Entrega:** 30/06/2026
+**Entrega:** 02/07/2026
 
 Este documento divide a implementação em 4 partes de complexidade e volume comparáveis, cada uma atribuível a um integrante da equipe. A divisão segue fronteiras arquiteturais naturais do sistema — cada parte corresponde a uma camada ou subsistema coeso, minimizando dependências cruzadas durante o desenvolvimento paralelo.
 
